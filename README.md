@@ -22,6 +22,23 @@
 
 これらの戦略を有効化・設定する方法は、下記の [設定](#configuration) セクションを参照してください。
 
+## コンポーネント図
+
+以下の図は、Crawl4AI RAG MCP サーバーが Crawl4AI および Supabase とどのように連携するかを示しています。
+
+```mermaid
+flowchart LR
+    agent["AI エージェント / MCP クライアント"]
+    mcp["Crawl4AI RAG MCP サーバー"]
+    crawl4ai["Crawl4AI"]
+    supabase[("Supabase")]
+
+    agent -- MCP --> mcp
+    mcp --> crawl4ai
+    mcp --> supabase
+    crawl4ai --> supabase
+```
+
 ## ビジョン
 
 Crawl4AI RAG MCP サーバーは始まりに過ぎません。今後の展望は次のとおりです。
