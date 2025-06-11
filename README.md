@@ -1,191 +1,191 @@
-<h1 align="center">Crawl4AI RAG MCP Server</h1>
+<h1 align="center">Crawl4AI RAG MCP サーバー</h1>
 
 <p align="center">
-  <em>Web Crawling and RAG Capabilities for AI Agents and AI Coding Assistants</em>
+  <em>AI エージェントと AI コーディングアシスタントのための Web クローリングと RAG 機能</em>
 </p>
 
-A powerful implementation of the [Model Context Protocol (MCP)](https://modelcontextprotocol.io) integrated with [Crawl4AI](https://crawl4ai.com) and [Supabase](https://supabase.com/) for providing AI agents and AI coding assistants with advanced web crawling and RAG capabilities.
+[Model Context Protocol (MCP)](https://modelcontextprotocol.io) を [Crawl4AI](https://crawl4ai.com) と [Supabase](https://supabase.com/) に統合した強力な実装で、AI エージェントや AI コーディングアシスタントに高度な Web クローリングと RAG 機能を提供します。
 
-With this MCP server, you can <b>scrape anything</b> and then <b>use that knowledge anywhere</b> for RAG.
+この MCP サーバーを使えば、<b>あらゆる情報をスクレイピング</b>し、<b>どこでもその知識を RAG に活用</b>できます。
 
-The primary goal is to bring this MCP server into [Archon](https://github.com/coleam00/Archon) as I evolve it to be more of a knowledge engine for AI coding assistants to build AI agents. This first version of the Crawl4AI/RAG MCP server will be improved upon greatly soon, especially making it more configurable so you can use different embedding models and run everything locally with Ollama.
+主な目的は、この MCP サーバーを [Archon](https://github.com/coleam00/Archon) に組み込み、AI コーディングアシスタントが AI エージェントを構築するための知識エンジンへと進化させることです。Crawl4AI/RAG MCP サーバーの初期バージョンは今後大きく改善され、より多様な埋め込みモデルを利用したり、Ollama を使ってローカルで実行できるようにするなど、柔軟な設定が可能になります。
 
-## Overview
+## 概要
 
-This MCP server provides tools that enable AI agents to crawl websites, store content in a vector database (Supabase), and perform RAG over the crawled content. It follows the best practices for building MCP servers based on the [Mem0 MCP server template](https://github.com/coleam00/mcp-mem0/) I provided on my channel previously.
+この MCP サーバーは、AI エージェントがウェブサイトをクロールし、コンテンツをベクターデータベース（Supabase）に保存して RAG を実行するためのツールを提供します。これは、以前チャンネルで紹介した [Mem0 MCP サーバーテンプレート](https://github.com/coleam00/mcp-mem0/) に基づく、MCP サーバー構築のベストプラクティスに従っています。
 
-The server includes several advanced RAG strategies that can be enabled to enhance retrieval quality:
-- **Contextual Embeddings** for enriched semantic understanding
-- **Hybrid Search** combining vector and keyword search
-- **Agentic RAG** for specialized code example extraction
-- **Reranking** for improved result relevance using cross-encoder models
+サーバーには、検索品質を向上させる複数の高度な RAG 戦略があり、必要に応じて有効化できます。
+- **コンテクスチュアル埋め込み** ― 文脈を強化したセマンティック理解
+- **ハイブリッド検索** ― ベクター検索とキーワード検索の組み合わせ
+- **エージェンティック RAG** ― コード例抽出に特化
+- **リランキング** ― クロスエンコーダーモデルによる結果の関連度向上
 
-See the [Configuration section](#configuration) below for details on how to enable and configure these strategies.
+これらの戦略を有効化・設定する方法は、下記の [設定](#configuration) セクションを参照してください。
 
-## Vision
+## ビジョン
 
-The Crawl4AI RAG MCP server is just the beginning. Here's where we're headed:
+Crawl4AI RAG MCP サーバーは始まりに過ぎません。今後の展望は次のとおりです。
 
-1. **Integration with Archon**: Building this system directly into [Archon](https://github.com/coleam00/Archon) to create a comprehensive knowledge engine for AI coding assistants to build better AI agents.
+1. **Archon との統合**: [Archon](https://github.com/coleam00/Archon) に直接組み込み、AI コーディングアシスタントがより優れた AI エージェントを構築できる包括的な知識エンジンを作成します。
 
-2. **Multiple Embedding Models**: Expanding beyond OpenAI to support a variety of embedding models, including the ability to run everything locally with Ollama for complete control and privacy.
+2. **多様な埋め込みモデル**: OpenAI 以外のモデルにも対応し、Ollama を利用したローカル実行も含め、完全な制御とプライバシーを提供します。
 
-3. **Advanced RAG Strategies**: Implementing sophisticated retrieval techniques like contextual retrieval, late chunking, and others to move beyond basic "naive lookups" and significantly enhance the power and precision of the RAG system, especially as it integrates with Archon.
+3. **高度な RAG 戦略**: コンテクスチュアルリトリーバルやレイトチャンクなど、単純な検索を超えた洗練された手法を導入し、特に Archon と連携した際に RAG システムの精度と威力を大幅に高めます。
 
-4. **Enhanced Chunking Strategy**: Implementing a Context 7-inspired chunking approach that focuses on examples and creates distinct, semantically meaningful sections for each chunk, improving retrieval precision.
+4. **高度なチャンク戦略**: Context 7 に着想を得たチャンク化アプローチを実装し、例を中心に意味のあるセクションを分割して検索精度を向上させます。
 
-5. **Performance Optimization**: Increasing crawling and indexing speed to make it more realistic to "quickly" index new documentation to then leverage it within the same prompt in an AI coding assistant.
+5. **パフォーマンス最適化**: クロールとインデックス作成の速度を上げ、新しいドキュメントを素早く取り込んで同じプロンプト内で活用できるようにします。
 
 ## Features
 
-- **Smart URL Detection**: Automatically detects and handles different URL types (regular webpages, sitemaps, text files)
-- **Recursive Crawling**: Follows internal links to discover content
-- **Parallel Processing**: Efficiently crawls multiple pages simultaneously
-- **Content Chunking**: Intelligently splits content by headers and size for better processing
-- **Vector Search**: Performs RAG over crawled content, optionally filtering by data source for precision
-- **Source Retrieval**: Retrieve sources available for filtering to guide the RAG process
+- **スマート URL 検出**: 通常のウェブページ、サイトマップ、テキストファイルなど URL の種類を自動判別
+- **再帰的クロール**: 内部リンクをたどってコンテンツを取得
+- **並列処理**: 複数ページを同時に効率よくクロール
+- **コンテンツ分割**: 見出しやサイズでコンテンツを賢く分割
+- **ベクター検索**: クロールしたコンテンツを対象に RAG を実行し、必要に応じてデータソースで絞り込み
+- **ソース取得**: RAG のガイドとなるフィルタリング可能なソース一覧を取得
 
 ## Tools
 
-The server provides essential web crawling and search tools:
+このサーバーは、ウェブクロールと検索に必要な基本ツールを提供します。
 
-### Core Tools (Always Available)
+### 基本ツール（常に利用可能）
 
-1. **`crawl_single_page`**: Quickly crawl a single web page and store its content in the vector database
-2. **`smart_crawl_url`**: Intelligently crawl a full website based on the type of URL provided (sitemap, llms-full.txt, or a regular webpage that needs to be crawled recursively)
-3. **`get_available_sources`**: Get a list of all available sources (domains) in the database
-4. **`perform_rag_query`**: Search for relevant content using semantic search with optional source filtering
+1. **`crawl_single_page`**: 単一のウェブページを素早くクロールし、その内容をベクターデータベースに保存
+2. **`smart_crawl_url`**: URL の種類（サイトマップ、llms-full.txt、通常ページ）に応じてサイト全体を賢くクロール
+3. **`get_available_sources`**: データベースに登録されているすべてのソース（ドメイン）を取得
+4. **`perform_rag_query`**: セマンティック検索で関連コンテンツを検索し、必要に応じてソースで絞り込み
 
-### Conditional Tools
+### 条件付きツール
 
-5. **`search_code_examples`** (requires `USE_AGENTIC_RAG=true`): Search specifically for code examples and their summaries from crawled documentation. This tool provides targeted code snippet retrieval for AI coding assistants.
+5. **`search_code_examples`**（`USE_AGENTIC_RAG=true` が必要）: クロールしたドキュメントからコード例とその概要を検索。AI コーディングアシスタント向けにコードスニペットを的確に取得します。
 
-## Prerequisites
+## 前提条件
 
-- [Docker/Docker Desktop](https://www.docker.com/products/docker-desktop/) if running the MCP server as a container (recommended)
-- [Python 3.12+](https://www.python.org/downloads/) if running the MCP server directly through uv
-- [Supabase](https://supabase.com/) (database for RAG)
-- [OpenAI API key](https://platform.openai.com/api-keys) (for generating embeddings)
+- MCP サーバーをコンテナとして実行する場合は [Docker/Docker Desktop](https://www.docker.com/products/docker-desktop/)（推奨）
+- MCP サーバーを直接実行する場合は [Python 3.12+](https://www.python.org/downloads/) と uv
+- RAG 用データベースとして [Supabase](https://supabase.com/)
+- 埋め込み生成に必要な [OpenAI API キー](https://platform.openai.com/api-keys)
 
-## Installation
+## インストール
 
-### Using Docker (Recommended)
+### Docker を利用する場合（推奨）
 
-1. Clone this repository:
+1. リポジトリをクローンします:
    ```bash
    git clone https://github.com/coleam00/mcp-crawl4ai-rag.git
    cd mcp-crawl4ai-rag
    ```
 
-2. Build the Docker image:
+2. Docker イメージをビルドします:
    ```bash
    docker build -t mcp/crawl4ai-rag --build-arg PORT=8051 .
    ```
 
-3. Create a `.env` file based on the configuration section below
+3. 下記の設定セクションを参考に `.env` ファイルを作成します
 
-### Using uv directly (no Docker)
+### Docker を使わず uv を直接利用する場合
 
-1. Clone this repository:
+1. リポジトリをクローンします:
    ```bash
    git clone https://github.com/coleam00/mcp-crawl4ai-rag.git
    cd mcp-crawl4ai-rag
    ```
 
-2. Install uv if you don't have it:
+2. uv がない場合はインストールします:
    ```bash
    pip install uv
    ```
 
-3. Create and activate a virtual environment:
+3. 仮想環境を作成して有効化します:
    ```bash
    uv venv
    .venv\Scripts\activate
    # on Mac/Linux: source .venv/bin/activate
    ```
 
-4. Install dependencies:
+4. 依存関係をインストールします:
    ```bash
    uv pip install -e .
    crawl4ai-setup
    ```
 
-5. Create a `.env` file based on the configuration section below
+5. 下記の設定セクションを参考に `.env` ファイルを作成します
 
-## Database Setup
+## データベースのセットアップ
 
-Before running the server, you need to set up the database with the pgvector extension:
+サーバーを実行する前に、pgvector 拡張機能を使ってデータベースを設定する必要があります。
 
-1. Go to the SQL Editor in your Supabase dashboard (create a new project first if necessary)
+1. Supabase ダッシュボードの SQL Editor を開きます（必要に応じて新しいプロジェクトを作成）
 
-2. Create a new query and paste the contents of `crawled_pages.sql`
+2. 新しいクエリを作成し、`crawled_pages.sql` の内容を貼り付けます
 
-3. Run the query to create the necessary tables and functions
+3. クエリを実行して必要なテーブルと関数を作成します
 
-## Configuration
+## 設定
 
-Create a `.env` file in the project root with the following variables:
+プロジェクトのルートに次の変数を含む `.env` ファイルを作成します:
 
 ```
-# MCP Server Configuration
+# MCP サーバー設定
 HOST=0.0.0.0
 PORT=8051
 TRANSPORT=sse
 
-# OpenAI API Configuration
+# OpenAI API 設定
 OPENAI_API_KEY=your_openai_api_key
 
-# LLM for summaries and contextual embeddings
+# 要約とコンテクスチュアル埋め込み用 LLM
 MODEL_CHOICE=gpt-4.1-nano
 
-# RAG Strategies (set to "true" or "false", default to "false")
+# RAG 戦略（"true" または "false"。デフォルトは "false"）
 USE_CONTEXTUAL_EMBEDDINGS=false
 USE_HYBRID_SEARCH=false
 USE_AGENTIC_RAG=false
 USE_RERANKING=false
 
-# Supabase Configuration
+# Supabase 設定
 SUPABASE_URL=your_supabase_project_url
 SUPABASE_SERVICE_KEY=your_supabase_service_key
 ```
 
-### RAG Strategy Options
+### RAG 戦略オプション
 
-The Crawl4AI RAG MCP server supports four powerful RAG strategies that can be enabled independently:
+この Crawl4AI RAG MCP サーバーでは、4 つの強力な RAG 戦略を個別に有効化できます。
 
 #### 1. **USE_CONTEXTUAL_EMBEDDINGS**
-When enabled, this strategy enhances each chunk's embedding with additional context from the entire document. The system passes both the full document and the specific chunk to an LLM (configured via `MODEL_CHOICE`) to generate enriched context that gets embedded alongside the chunk content.
+有効にすると、ドキュメント全体の追加コンテキストを各チャンクの埋め込みに付与します。システムは全文と対象チャンクを LLM（`MODEL_CHOICE` で設定）に渡し、生成された豊かなコンテキストをチャンク内容とともに埋め込みます。
 
-- **When to use**: Enable this when you need high-precision retrieval where context matters, such as technical documentation where terms might have different meanings in different sections.
-- **Trade-offs**: Slower indexing due to LLM calls for each chunk, but significantly better retrieval accuracy.
-- **Cost**: Additional LLM API calls during indexing.
+- **使用場面**: 文脈が重要な技術文書など、高精度な検索が必要な場合に有効化します。
+- **トレードオフ**: 各チャンクで LLM を呼び出すためインデックス作成が遅くなりますが、検索精度は大幅に向上します。
+- **コスト**: インデックス作成時に追加の LLM API コールが発生します。
 
 #### 2. **USE_HYBRID_SEARCH**
-Combines traditional keyword search with semantic vector search to provide more comprehensive results. The system performs both searches in parallel and intelligently merges results, prioritizing documents that appear in both result sets.
+従来のキーワード検索とセマンティックベクター検索を組み合わせ、より包括的な結果を得ます。両方の検索を並行して実行し、両方に現れた文書を優先して賢く統合します。
 
-- **When to use**: Enable this when users might search using specific technical terms, function names, or when exact keyword matches are important alongside semantic understanding.
-- **Trade-offs**: Slightly slower search queries but more robust results, especially for technical content.
-- **Cost**: No additional API costs, just computational overhead.
+- **使用場面**: 特定の技術用語や関数名で検索する場合、あるいはキーワードの一致が重要なときに有効化します。
+- **トレードオフ**: 検索クエリはやや遅くなりますが、特に技術文書で堅牢な結果が得られます。
+- **コスト**: 追加の API コストはなく、計算負荷のみです。
 
 #### 3. **USE_AGENTIC_RAG**
-Enables specialized code example extraction and storage. When crawling documentation, the system identifies code blocks (≥300 characters), extracts them with surrounding context, generates summaries, and stores them in a separate vector database table specifically designed for code search.
+ドキュメントをクロールするとき、300 文字以上のコードブロックを検出し、周辺コンテキストと共に抽出して要約を生成し、コード検索用に設計された別のベクターテーブルに保存します。
 
-- **When to use**: Essential for AI coding assistants that need to find specific code examples, implementation patterns, or usage examples from documentation.
-- **Trade-offs**: Significantly slower crawling due to code extraction and summarization, requires more storage space.
-- **Cost**: Additional LLM API calls for summarizing each code example.
-- **Benefits**: Provides a dedicated `search_code_examples` tool that AI agents can use to find specific code implementations.
+- **使用場面**: ドキュメントから具体的なコード例や実装パターン、利用例を探す AI コーディングアシスタントに必須です。
+- **トレードオフ**: コード抽出と要約のためクロールが大幅に遅くなり、ストレージも多く必要です。
+- **コスト**: 各コード例の要約に追加の LLM API コールが発生します。
+- **利点**: AI エージェントが特定の実装例を探す際に利用できる `search_code_examples` ツールを提供します。
 
 #### 4. **USE_RERANKING**
-Applies cross-encoder reranking to search results after initial retrieval. Uses a lightweight cross-encoder model (`cross-encoder/ms-marco-MiniLM-L-6-v2`) to score each result against the original query, then reorders results by relevance.
+初期検索後にクロスエンコーダーで結果を再ランク付けします。軽量なクロスエンコーダーモデル（`cross-encoder/ms-marco-MiniLM-L-6-v2`）を使い、クエリとの関連度で各結果をスコアリングし、関連度順に並び替えます。
 
-- **When to use**: Enable this when search precision is critical and you need the most relevant results at the top. Particularly useful for complex queries where semantic similarity alone might not capture query intent.
-- **Trade-offs**: Adds ~100-200ms to search queries depending on result count, but significantly improves result ordering.
-- **Cost**: No additional API costs - uses a local model that runs on CPU.
-- **Benefits**: Better result relevance, especially for complex queries. Works with both regular RAG search and code example search.
+- **使用場面**: 検索精度が最重要で、最も関連度の高い結果を上位に表示したい場合に有効です。セマンティック類似だけでは意図を捉えにくい複雑なクエリに特に役立ちます。
+- **トレードオフ**: 結果数に応じて検索に 100～200ms ほど追加時間がかかりますが、結果の並びは大きく改善されます。
+- **コスト**: 追加の API コストはなく、CPU で動作するローカルモデルを使用します。
+- **利点**: 複雑なクエリでも関連度の高い結果が得られ、通常の RAG 検索にもコード検索にも利用できます。
 
-### Recommended Configurations
+### 推奨設定
 
-**For general documentation RAG:**
+**一般的なドキュメント向け RAG:**
 ```
 USE_CONTEXTUAL_EMBEDDINGS=false
 USE_HYBRID_SEARCH=true
@@ -193,7 +193,7 @@ USE_AGENTIC_RAG=false
 USE_RERANKING=true
 ```
 
-**For AI coding assistant with code examples:**
+**コード例を扱う AI コーディングアシスタント向け:**
 ```
 USE_CONTEXTUAL_EMBEDDINGS=true
 USE_HYBRID_SEARCH=true
@@ -201,7 +201,7 @@ USE_AGENTIC_RAG=true
 USE_RERANKING=true
 ```
 
-**For fast, basic RAG:**
+**高速で基本的な RAG:**
 ```
 USE_CONTEXTUAL_EMBEDDINGS=false
 USE_HYBRID_SEARCH=true
@@ -209,27 +209,27 @@ USE_AGENTIC_RAG=false
 USE_RERANKING=false
 ```
 
-## Running the Server
+## サーバーの実行
 
-### Using Docker
+### Docker を使用する場合
 
 ```bash
 docker run --env-file .env -p 8051:8051 mcp/crawl4ai-rag
 ```
 
-### Using Python
+### Python を使用する場合
 
 ```bash
 uv run src/crawl4ai_mcp.py
 ```
 
-The server will start and listen on the configured host and port.
+サーバーが起動すると、設定したホストとポートで待ち受けます。
 
-## Integration with MCP Clients
+## MCP クライアントとの統合
 
-### SSE Configuration
+### SSE 設定
 
-Once you have the server running with SSE transport, you can connect to it using this configuration:
+サーバーを SSE で起動したら、次の設定で接続できます。
 
 ```json
 {
@@ -242,7 +242,7 @@ Once you have the server running with SSE transport, you can connect to it using
 }
 ```
 
-> **Note for Windsurf users**: Use `serverUrl` instead of `url` in your configuration:
+> **Windsurf ユーザーへの注意**: 設定では `url` ではなく `serverUrl` を使用してください。
 > ```json
 > {
 >   "mcpServers": {
@@ -254,11 +254,11 @@ Once you have the server running with SSE transport, you can connect to it using
 > }
 > ```
 >
-> **Note for Docker users**: Use `host.docker.internal` instead of `localhost` if your client is running in a different container. This will apply if you are using this MCP server within n8n!
+> **Docker ユーザーへの注意**: クライアントが別コンテナで動作している場合は `localhost` の代わりに `host.docker.internal` を使用してください。n8n でこの MCP サーバーを使う場合にも当てはまります。
 
-### Stdio Configuration
+### Stdio 設定
 
-Add this server to your MCP configuration for Claude Desktop, Windsurf, or any other MCP client:
+Claude Desktop や Windsurf など、任意の MCP クライアントの設定に次を追加します。
 
 ```json
 {
@@ -277,7 +277,7 @@ Add this server to your MCP configuration for Claude Desktop, Windsurf, or any o
 }
 ```
 
-### Docker with Stdio Configuration
+### Docker で Stdio を利用する設定
 
 ```json
 {
@@ -301,11 +301,12 @@ Add this server to your MCP configuration for Claude Desktop, Windsurf, or any o
 }
 ```
 
-## Building Your Own Server
+## 独自サーバーの構築
 
-This implementation provides a foundation for building more complex MCP servers with web crawling capabilities. To build your own:
+この実装は、より高度な Web クローリング機能を備えた MCP サーバーを構築するための基盤となります。独自のサーバーを構築するには次の手順を参考にしてください。
 
-1. Add your own tools by creating methods with the `@mcp.tool()` decorator
-2. Create your own lifespan function to add your own dependencies
-3. Modify the `utils.py` file for any helper functions you need
-4. Extend the crawling capabilities by adding more specialized crawlers
+1. `@mcp.tool()` デコレーターを使って独自のツールを追加する
+2. 独自の依存関係を組み込むために lifespan 関数を作成する
+3. 必要に応じて `utils.py` を編集してヘルパー関数を追加する
+4. より専門的なクローラーを追加してクロール機能を拡張する
+
